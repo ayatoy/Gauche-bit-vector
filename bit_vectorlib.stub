@@ -1,0 +1,56 @@
+"
+#include \"bit_vector.h\"
+"
+
+(define-type <bit-vector> "ScmBitVector*" #f
+  "SCM_BIT_VECTOR_P" "SCM_BIT_VECTOR" "SCM_OBJ")
+
+(define-cproc bit-vector?
+  (obj) ::<boolean>
+  SCM_BIT_VECTOR_P)
+
+(define-cproc bit-vector-length
+  (bv::<bit-vector>) ::<int>
+  SCM_BIT_VECTOR_LENGTH)
+
+(define-cproc bit-vector-builded?
+  (bv::<bit-vector>) ::<boolean>
+  SCM_BIT_VECTOR_BUILDED)
+
+(define-cproc make-bit-vector
+  (length::<int> :optional (fill::<boolean> #f)) ::<bit-vector>
+  Scm_MakeBitVector)
+
+(define-cproc bit-vector-clear!
+  (bv::<bit-vector>) ::<bit-vector>
+  Scm_BitVectorClear)
+
+(define-cproc bit-vector-build!
+  (bv::<bit-vector>) ::<bit-vector>
+  Scm_BitVectorBuild)
+
+(define-cproc bit-vector-ref
+  (bv::<bit-vector> i::<int>) ::<boolean>
+  Scm_BitVectorRef)
+
+(define-cproc bit-vector-set!
+  (bv::<bit-vector> i::<ulong> bit::<boolean>) ::<bit-vector>
+  Scm_BitVectorSet)
+
+(define-cproc bit-vector-fill!
+  (bv::<bit-vector>
+   fill::<boolean>
+   :optional (start::<int> 0) (end::<int> -1)) ::<bit-vector>
+  Scm_BitVectorFill)
+
+(define-cproc bit-vector-rank
+  (bv::<bit-vector> i::<int> :optional (bit::<boolean> #t)) ::<int>
+  Scm_BitVectorRank)
+
+(define-cproc bit-vector-rank-all
+  (bv::<bit-vector> :optional (bit::<boolean> #t)) ::<int>
+  Scm_BitVectorRankAll)
+
+(define-cproc bit-vector-select
+  (bv::<bit-vector> i::<int> :optional (bit::<boolean> #t)) ::<int>
+  Scm_BitVectorSelect)
