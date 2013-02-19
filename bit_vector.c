@@ -7,7 +7,7 @@ static void bitvector_print(ScmObj obj, ScmPort *port, ScmWriteContext *ctx)
 
 SCM_DEFINE_BUILTIN_CLASS_SIMPLE(Scm_BitVectorClass, bitvector_print);
 
-static inline int rank1(u_long b, int i)
+static inline long rank1(u_long b, long i)
 {
 #if SIZEOF_LONG == 4
   b = i ? (b << (SCM_WORD_BITS - i)) : 0;
@@ -29,7 +29,7 @@ static inline int rank1(u_long b, int i)
 #endif
 }
 
-static inline int select1(u_long b, int i)
+static inline long select1(u_long b, long i)
 {
 #if SIZEOF_LONG == 4
   u_long b1 = ((b  & 0xaaaaaaaaUL) >> 1) + (b  & 0x55555555UL);
@@ -37,7 +37,7 @@ static inline int select1(u_long b, int i)
   u_long b3 = ((b2 & 0xf0f0f0f0UL) >> 4) + (b2 & 0x0f0f0f0fUL);
   u_long b4 = ((b3 & 0xff00ff00UL) >> 8) + (b3 & 0x00ff00ffUL);
   u_long v0, v1, v2, v3, v4;
-  int pos = 0;
+  long pos = 0;
   i++;
   v4 = (b4 >> pos) & 0xffffUL; if (i > v4) { i -= v4; pos += 16; }
   v3 = (b3 >> pos) & 0x00ffUL; if (i > v3) { i -= v3; pos +=  8; }
@@ -52,7 +52,7 @@ static inline int select1(u_long b, int i)
   u_long b4 = ((b3 & 0xff00ff00ff00ff00UL) >>  8) + (b3 & 0x00ff00ff00ff00ffUL);
   u_long b5 = ((b4 & 0xffff0000ffff0000UL) >> 16) + (b4 & 0x0000ffff0000ffffUL);
   u_long v0, v1, v2, v3, v4, v5;
-  int pos = 0;
+  long pos = 0;
   i++;
   v5 = (b5 >> pos) & 0xffffffffUL; if (i > v5) { i -= v5; pos += 32; }
   v4 = (b4 >> pos) & 0x0000ffffUL; if (i > v4) { i -= v4; pos += 16; }
@@ -64,7 +64,7 @@ static inline int select1(u_long b, int i)
 #endif
 }
 
-ScmBitVector *Scm_MakeBitVector(int length, int fill)
+ScmBitVector *Scm_MakeBitVector(long length, int fill)
 {
   ScmBitVector *bv;
 
@@ -78,7 +78,7 @@ ScmBitVector *Scm_MakeBitVector(int length, int fill)
   bv->blocks    = (length == 0) ? NULL
     : SCM_NEW_ATOMIC_ARRAY(ScmBits, bv->numBlocks);
   bv->rankTable = (length == 0) ? NULL
-    : SCM_NEW_ATOMIC_ARRAY(int, bv->numBlocks + 1);
+    : SCM_NEW_ATOMIC_ARRAY(long, bv->numBlocks + 1);
   Scm_BitVectorClear(bv);
   if (fill && (0 < bv->length)) {
     Scm_BitVectorFill(bv, fill, 0, bv->length);
@@ -90,7 +90,7 @@ ScmBitVector *Scm_MakeBitVector(int length, int fill)
 ScmBitVector *Scm_BitVectorClear(ScmBitVector *bv)
 {
   if (0 < bv->length) {
-    int i;
+    long i;
     for (i = 0; i < bv->numBlocks; i++)
       bv->rankTable[i] = bv->blocks[i] = 0x0UL;
     bv->rankTable[i] = 0x0UL;
@@ -102,7 +102,7 @@ ScmBitVector *Scm_BitVectorClear(ScmBitVector *bv)
 ScmBitVector *Scm_BitVectorBuild(ScmBitVector *bv)
 {
   if (0 < bv->length) {
-    int i, r = 0;
+    long i, r = 0;
     for (i = 0; i < bv->numBlocks; i++) {
       bv->rankTable[i] = r;
       r += rank1(bv->blocks[i], SCM_WORD_BITS);
@@ -113,9 +113,9 @@ ScmBitVector *Scm_BitVectorBuild(ScmBitVector *bv)
   return bv;
 }
 
-int Scm_BitVectorRef(ScmBitVector *bv, int i)
+int Scm_BitVectorRef(ScmBitVector *bv, long i)
 {
-  int b;
+  long b;
   ScmBits m;
 
   if (i < 0 || bv->length <= i)
@@ -125,9 +125,9 @@ int Scm_BitVectorRef(ScmBitVector *bv, int i)
   return (bv->blocks[b] & m) ? 1 : 0;
 }
 
-ScmBitVector *Scm_BitVectorSet(ScmBitVector *bv, int i, int bit)
+ScmBitVector *Scm_BitVectorSet(ScmBitVector *bv, long i, int bit)
 {
-  int b;
+  long b;
   ScmBits m;
 
   if (i < 0 || bv->length <= i)
@@ -140,9 +140,9 @@ ScmBitVector *Scm_BitVectorSet(ScmBitVector *bv, int i, int bit)
   return bv;
 }
 
-ScmBitVector *Scm_BitVectorFill(ScmBitVector *bv, int fill, int start, int end)
+ScmBitVector *Scm_BitVectorFill(ScmBitVector *bv, int fill, long start, long end)
 {
-  int s, e, sb, eb;
+  long s, e, sb, eb;
 
   if (start < 0 || bv->length <= start)
     Scm_Error("argument out of range: %d", start);
@@ -180,9 +180,9 @@ ScmBitVector *Scm_BitVectorFill(ScmBitVector *bv, int fill, int start, int end)
   return bv;
 }
 
-int Scm_BitVectorRank(ScmBitVector *bv, int i, int bit)
+long Scm_BitVectorRank(ScmBitVector *bv, long i, int bit)
 {
-  int b, r;
+  long b, r;
 
   if (i < 0 || bv->length < i)
     Scm_Error("argument out of range: %d", i);
@@ -195,9 +195,9 @@ int Scm_BitVectorRank(ScmBitVector *bv, int i, int bit)
   return bit ? r : i - r;
 }
 
-int Scm_BitVectorRankAll(ScmBitVector *bv, int bit)
+long Scm_BitVectorRankAll(ScmBitVector *bv, int bit)
 {
-  int r;
+  long r;
 
   if (bv->length == 0)
     return 0;
@@ -207,9 +207,9 @@ int Scm_BitVectorRankAll(ScmBitVector *bv, int bit)
   return bit ? r : (bv->length - r);
 }
 
-int Scm_BitVectorSelect(ScmBitVector *bv, int i, int bit)
+long Scm_BitVectorSelect(ScmBitVector *bv, long i, int bit)
 {
-  int min, max, end;
+  long min, max, end;
 
   if (i < 0)
     Scm_Error("argument out of range: %d", i);
@@ -220,8 +220,8 @@ int Scm_BitVectorSelect(ScmBitVector *bv, int i, int bit)
   min = 0;
   max = bv->numBlocks;
   while (min < max) {
-    int p = (min + max) / 2;
-    int r = bv->rankTable[p];
+    long p = (min + max) / 2;
+    long r = bv->rankTable[p];
     if (!bit) r = p * SCM_WORD_BITS - r;
     if (i < r) max = p;
     else       min = p + 1;

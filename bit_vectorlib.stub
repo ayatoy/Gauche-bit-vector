@@ -10,7 +10,7 @@
   SCM_BIT_VECTOR_P)
 
 (define-cproc bit-vector-length
-  (bv::<bit-vector>) ::<int>
+  (bv::<bit-vector>) ::<long>
   SCM_BIT_VECTOR_LENGTH)
 
 (define-cproc bit-vector-builded?
@@ -18,7 +18,7 @@
   SCM_BIT_VECTOR_BUILDED)
 
 (define-cproc make-bit-vector
-  (length::<int> :optional (fill::<boolean> #f)) ::<bit-vector>
+  (length::<long> :optional (fill::<boolean> #f)) ::<bit-vector>
   Scm_MakeBitVector)
 
 (define-cproc bit-vector-clear!
@@ -30,7 +30,7 @@
   Scm_BitVectorBuild)
 
 (define-cproc bit-vector-ref
-  (bv::<bit-vector> i::<int>) ::<boolean>
+  (bv::<bit-vector> i::<long>) ::<boolean>
   Scm_BitVectorRef)
 
 (define-cproc bit-vector-set!
@@ -40,17 +40,17 @@
 (define-cproc bit-vector-fill!
   (bv::<bit-vector>
    fill::<boolean>
-   :optional (start::<int> 0) (end::<int> -1)) ::<bit-vector>
+   :optional (start::<long> 0) (end::<long> -1)) ::<bit-vector>
   Scm_BitVectorFill)
 
 (define-cproc bit-vector-rank
-  (bv::<bit-vector> i::<int> :optional (bit::<boolean> #t)) ::<int>
+  (bv::<bit-vector> i::<long> :optional (bit::<boolean> #t)) ::<long>
   Scm_BitVectorRank)
 
 (define-cproc bit-vector-rank-all
-  (bv::<bit-vector> :optional (bit::<boolean> #t)) ::<int>
+  (bv::<bit-vector> :optional (bit::<boolean> #t)) ::<long>
   Scm_BitVectorRankAll)
 
 (define-cproc bit-vector-select
-  (bv::<bit-vector> i::<int> :optional (bit::<boolean> #t)) ::<int>
+  (bv::<bit-vector> i::<long> :optional (bit::<boolean> #t)) ::<long>
   Scm_BitVectorSelect)
