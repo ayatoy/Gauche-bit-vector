@@ -8,12 +8,12 @@
 SCM_DECL_BEGIN
 
 typedef struct ScmBitVectorRec {
-  SCM_HEADER;
-  long length;
-  u_long builded : 1;
-  long numBlocks : (SIZEOF_INT*CHAR_BIT-1);
-  ScmBits *blocks;
-  long *rankTable;
+    SCM_HEADER;
+    long length;
+    u_long builded : 1;
+    long numBlocks : (SIZEOF_INT*CHAR_BIT-1);
+    ScmBits *blocks;
+    long *rankTable;
 } ScmBitVector;
 
 SCM_CLASS_DECL(Scm_BitVectorClass);
